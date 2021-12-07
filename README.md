@@ -14,13 +14,15 @@
 
 ## ⚡ Features
 
-🎯 **Multiple User Authentication** - Start with either a Reader or a Publisher Account.
-
 🎯 **Multiple Login Choices** - You can sign up for a new account and log in, or simply use your google account to log in.
 
-🎯 **New Creation** - Publisher can create new recipes.
+🎯 **New Creation** - You can create new recipes.
 
-🎯 **Latest News First** - Recipes were ranked by publishing time so that you can read the latest one first.
+🎯 **Latest News First** - In the home page, recipes were ranked by publishing time so that you can read the latest one first.
+
+🎯 **Search Recipe** - You can Search interested recipe.
+
+🎯 **Personal Collections** - You can have your own collection page.
 
 
 
