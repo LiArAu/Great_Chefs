@@ -25,8 +25,6 @@
                     Category: {%for cat in recipe.category.all %} <a href="{% url 'category_detail' cat.id%}"><b><i>{{cat}}
                             </i></b> </a>{%endfor%}
                 </p>
-                <p>Published by: <a href="{% url 'publisher_detail' recipe.publisher.id%}"><b>{{ recipe.publisher }}</b></a>
-                </p>
                 <p>Date: {{ recipe.pub_time }}</p>
             </div>
         </div>

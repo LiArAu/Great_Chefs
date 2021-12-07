@@ -10,7 +10,11 @@ from django.http import Http404
 from collections import OrderedDict
 from django.utils.translation import gettext as _
 from django_scopes import scopes_disabled
-from chefapp.helper.permissions import group_required, has_group_permission
+import uuid
+from django.http import HttpResponseRedirect
+from django.conf import settings
+from django.core.exceptions import ValidationError
+
 
 def register(request):
     if request.method == 'POST':
@@ -19,10 +23,10 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account has been created for {username}!')
-            return redirect('profile')
+            return redirect('home')
     else:
         form = UserRegisterForm()
-    return render(request, 'recipeapp/register.html', {'form': form})
+    return render(request, 'chefapp/register.html', {'form': form})
 
 @login_required
 def add_recipe(request):
@@ -30,7 +34,7 @@ def add_recipe(request):
         form = RecipePublishForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            publisher = form.cleaned_data.get('publisher')
+            publisher = request.user
             messages.success(request, f'{publisher}, Thank you for sharing the recipe with us!')
             return redirect('home')
     else:
@@ -39,51 +43,46 @@ def add_recipe(request):
 
 
 @login_required
-def nozone(request):
-    if request.method == 'POST':
-        create_form = SharezoneCreationForm(request.POST,prefix='create')
-        join_form = SharezoneJoinForm(request.POST,prefix='join')
-        if create_form.is_valid():
-            created_zone = ShareZone.objects.create(
-                name=create_form.cleaned_data['name'],
-                created_by=request.user,
-                max_file_storage_mb=settings.SHAREZONE_DEFAULT_MAX_FILES,
-                max_recipes=settings.SHAREZONE_DEFAULT_MAX_RECIPES,
-                max_users=settings.SHAREZONE_DEFAULT_MAX_USERS,
-                allow_sharing=settings.SHAREZONE_DEFAULT_ALLOW_SHARING,
-            )
-
-            request.user.userpreference.sharezone = created_zone
-            request.user.userpreference.save()
-            request.user.groups.add(Group.objects.filter(name='admin').get())
-
-            messages.add_message(request, messages.SUCCESS,_('Your sharezone is ready. Start by adding some recipes or invite other people to join you.'))
-            return HttpResponseRedirect(reverse('index'))
-
-        if join_form.is_valid():
-            return HttpResponseRedirect(reverse('view_invite', args=[join_form.cleaned_data['token']]))
+def zone(request):
+    if request.user.userprofile.zone_created == True:
+        zonename = request.user.userprofile.sharezone.name
+        recipes = OrderedDict.fromkeys(RecipeContent.objects.filter(sharezone=request.user.userprofile.sharezone).all().order_by('title'))
+        return render(request, 'chefapp/sharezone.html', {'zonename': zonename, 'recipelist':recipes})
     else:
-        create_form = SharezoneCreationForm()
-        join_form = SharezoneJoinForm()
-    return render(request, 'chefapp/nozone.html', {'create_form': create_form, 'join_form': join_form})
+        if request.method == 'POST':
+            create_form = SharezoneCreationForm(request.POST,prefix='create')
+            if create_form.is_valid():
+                created_zone = ShareZone.objects.create(
+                    name=create_form.cleaned_data['name'],
+                    created_by=request.user,
+                    max_storage_mb=settings.SHAREZONE_DEFAULT_MAX_FILES,
+                    max_recipes=settings.SHAREZONE_DEFAULT_MAX_RECIPES,
+                    max_users=settings.SHAREZONE_DEFAULT_MAX_USERS,
+                    allow_sharing=settings.SHAREZONE_DEFAULT_ALLOW_SHARING,
+                )
 
-@group_required('admin')
-def havezone(request):
-    sharezone_users = UserPreference.objects.filter(sharezone=request.sharezone).all()
-    counts = Object()
-    counts.recipes = RecipeContent.objects.filter(sharezone=request.sharezone).count()
-    counts.comments = Comment.objects.filter(recipe__sharezone=request.sharezone).count()
+                request.user.userprofile.sharezone = created_zone
+                request.user.userprofile.zone_created = True
+                request.user.userprofile.save()
 
-    invite_links = InviteLink.objects.filter(valid_until__gte=datetime.today(), used_by=None, sharezone=request.sharezone).all()
-    RequestConfig(request, paginate={'per_page': 25}).configure(invite_links)
+                messages.add_message(request, messages.SUCCESS,_('Your sharezone is ready. Start by adding some recipes or invite other people to join you.'))
+                return redirect('home')
+        else:
+            create_form = SharezoneCreationForm()
+        return render(request, 'chefapp/no_space_info.html', {'create_form': create_form})
 
-    return render(request, 'sharezone.html', {'sharezone_users': sharezone_users, 'counts': counts, 'invite_links': invite_links})
 
 
 @login_required
 def home(request):
-    recipes = OrderedDict.fromkeys(RecipeContent.objects.filter(Q(category__in = request.user.userprofile.category.all())).order_by('-id'))
-    return render(request, 'chefapp/home.html',{'recipelist': recipes})
+    recipes = OrderedDict.fromkeys(RecipeContent.objects.order_by('pub_time'))
+    return render(request, 'chefapp/home.html', {'recipelist': recipes})
+
+def no_perm(request):
+    if not request.user.is_authenticated:
+        messages.add_message(request, messages.ERROR, _('You are not logged in and therefore cannot view this page!'))
+        return redirect('login')
+    return render(request, 'chefapp/no_perm_info.html')
 
 class RecipeDetailView(generic.DetailView):
     model = RecipeContent
@@ -95,3 +94,6 @@ class CatDetailView(generic.DetailView):
         recipes = OrderedDict.fromkeys(RecipeContent.objects.filter(category = self.kwargs['pk']).order_by('-id'))
         context['recipelist'] = recipes
         return context
+
+class ProfDetailView(generic.DetailView):
+    model = UserProfile

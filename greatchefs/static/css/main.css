@@ -38,14 +38,14 @@ footer {
 }
 
 .card-header {
-    color: rgb(152, 214, 230)!important;
-    background: rgb(152, 214, 230) !important;
+    color: rgb(230, 192, 152)!important;
+    background: rgb(182, 189, 157) !important;
     transition: 0.3s ease-in;
 
 }
 
 .nav-link:hover {
-    background: darkblue !important;
+    background: rgb(227, 199, 159) !important;
     color: white !important;
     transition: 0.7s ease;
 }
@@ -105,7 +105,7 @@ body {
 }
 
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.5));
+    background: #f5f3e1;
     overflow-x: hidden;
     background-repeat: no-repeat;
 }

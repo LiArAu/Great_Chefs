@@ -1,0 +1,31 @@
+{% extends "chefapp/base.html" %} {% load crispy_forms_filters %} {% load static %}
+
+{% block title %}<h1>No Space</h1>{% endblock %}
+
+{% block content %}
+
+    <div style="text-align: center">
+
+        <h3 class="">Welcome</h3>
+
+        <div class="row" style="margin-top: 2vh">
+            <div class="col col-md-12">
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body py-3 mb-4">
+                            <h5 class="card-title">Please create your own recipe collection.</h5>
+                            <form method="POST" action="{% url 'view_zone' %}" class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                {% csrf_token %}
+                                {{ create_form | crispy }}
+                                <input type="submit" class="btn btn-primary" value="Create Collection"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

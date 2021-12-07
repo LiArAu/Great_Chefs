@@ -5,13 +5,43 @@
   <form method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Change Your Preferences</legend>
+      <legend class="border-bottom mb-4">{{zonename}}</legend>
       {{ form|crispy }}
     </fieldset>
-    <div class="form-group">
-      <button href="" class="btn btn-outline-info" type="submit">Update</button>
-    </div>
   </form>
 </div>
+
+{% for recipe in recipelist%}
+
+<div class="container">
+    <div class="card">
+        <a href="{% url 'recipe_detail' recipe.id%}">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h4>{{ recipe.title }}</h4>
+                        <h6>{{ recipe.abstract }}</h6>
+                    </div>
+                    {% if recipe.pictures %}
+                    <div class="col-md-5">
+                        <img src="{{recipe.pictures.url}}" style="height: 100px; width: 150px" alt="recipe-image" />
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        <div class="card-body text-dark">
+            <p>
+                Category: {%for cat in recipe.category.all %} <a href="{% url 'category_detail' cat.id%}"><b><i>{{cat}}
+                        </i></b> </a>{%endfor%}
+            </p>
+            <p>Published by: <a href="{% url 'profile_detail' recipe.created_by%}"><b>{{ recipe.created_by }}</b></a>
+            </p>
+            <p>Date: {{ recipe.pub_time }}</p>
+        </div>
+    </div>
+</div>
+<br /><br />
+{%endfor%}
 
 {% endblock content %}

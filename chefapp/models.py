@@ -11,8 +11,6 @@ from greatchefs.settings import (COMMENT_PREF_DEFAULT, FRACTION_PREF_DEFAULT, KJ
 def default_valid_until():
     return date.today() + timedelta(days=14)
 
-
-
 class Category(models.Model):
     category = models.CharField(max_length = 15)
 
@@ -40,13 +38,12 @@ class RecipeContent(models.Model):
     working_time = models.IntegerField(default=0)
     category = models.ManyToManyField(Category)
     pub_time = models.DateTimeField(auto_now_add = True)
-    publisher = models.ForeignKey(User, on_delete = models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     pictures = models.ImageField(null = True, blank = True, upload_to = 'recipe_images/')
     sharezone = models.ForeignKey(ShareZone, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
-
 
 class Comment(models.Model):
     recipe = models.ForeignKey(RecipeContent, on_delete=models.CASCADE)
@@ -66,27 +63,28 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
-class InviteLink(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4)
-    email = models.EmailField(blank=True)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    valid_until = models.DateField(default=default_valid_until)
-    used_by = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='used_by')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    sharezone = models.ForeignKey(ShareZone, on_delete=models.CASCADE)
-    objects = ScopedManager(sharezone='sharezone')
-
-    def __str__(self):
-        return f'{self.uuid}'
+# class InviteLink(models.Model):
+#     uuid = models.UUIDField(default=uuid.uuid4)
+#     email = models.EmailField(blank=True)
+#     group = models.ForeignKey(Group, on_delete=models.CASCADE)
+#     valid_until = models.DateField(default=default_valid_until)
+#     used_by = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='used_by')
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     sharezone = models.ForeignKey(ShareZone, on_delete=models.CASCADE)
+#     objects = ScopedManager(sharezone='sharezone')
+#
+#     def __str__(self):
+#         return f'{self.uuid}'
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
-    category = models.ManyToManyField('Category')
-    comments = models.BooleanField(default=COMMENT_PREF_DEFAULT)
+    # category = models.ManyToManyField('Category')
+    # comments = models.BooleanField(default=COMMENT_PREF_DEFAULT)
     created_at = models.DateTimeField(auto_now_add=True)
     sharezone = models.ForeignKey(ShareZone, on_delete=models.CASCADE, null=True)
+    zone_created = models.BooleanField(default=False)
     objects = ScopedManager(sharezone='sharezone')
     # tell django what to print
     def __str__(self):
@@ -106,7 +104,6 @@ class SearchFields(models.Model):
 
 def allSearchFields():
     return list(SearchFields.objects.values_list('id', flat=True))
-
 
 def nameSearchField():
     return [SearchFields.objects.get(name='Name').id]

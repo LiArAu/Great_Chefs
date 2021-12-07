@@ -4,6 +4,8 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django_scopes import scopes_disabled
 from django_scopes.forms import SafeModelChoiceField, SafeModelMultipleChoiceField
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 class UserRegisterForm(UserCreationForm):
     class Meta:
@@ -24,7 +26,3 @@ class SharezoneCreationForm(forms.Form):
             if ShareZone.objects.filter(name=name).exists():
                 raise ValidationError(_('Name already taken.'))
         return name
-
-class SpaceJoinForm(forms.Form):
-    prefix = 'join'
-    token = forms.CharField()
