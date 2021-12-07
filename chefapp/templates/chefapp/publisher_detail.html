@@ -1,0 +1,49 @@
+{% extends 'chefapp/base.html' %} {% block content %}
+<section class="container-fluid text-center">
+  <h3>Latest Recipe</h3>
+  {% for recipe in recipelist%}
+
+  <div class="container">
+    <div class="card">
+      <a href="{% url 'recipe_detail' recipe.id%}">
+        <div class="card-header link">
+          <div class="row">
+            <div class="col-md-7">
+              <h4>{{ recipe.title }}</h4>
+              <h6>{{ recipe.short_desc }}</h6>
+            </div>
+            {% if recipe.pictures %}
+
+            <div class="col-md-5">
+              <img
+                src="{{recipe.pictures.url}}"
+                style="height: 100px; width: 100px"
+                alt="recipe-image"
+              />
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+      <div class="card-body text-dark">
+        <p>
+          Category: {%for cat in recipe.category.all %}
+          <a href="{% url 'category_detail' cat.id%}"
+            ><b><i>{{cat}}, </i></b> </a
+          >{%endfor%}
+        </p>
+        <p>
+          Published by:
+          <a href="{% url 'publisher_detail' recipe.publisher.id%}"
+            ><b>{{ recipe.publisher }}</b></a
+          >
+        </p>
+        <p>Date: {{ recipe.published }}</p>
+      </div>
+    </div>
+  </div>
+  <br /><br />
+  {%endfor%}
+</section>
+
+{% endblock content %}

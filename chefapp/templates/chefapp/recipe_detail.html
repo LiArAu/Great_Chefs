@@ -1,0 +1,28 @@
+{% extends 'chefapp/base.html'%} {% block content %}
+<div class="container">
+  <div class="content-section">
+
+
+      <h2>{{recipecontent.title}}</h2>
+      <h4>{{recipecontent.abstract}}</h4>
+
+  {% if recipecontent.pictures %}
+      <img class="img-fluid" src={{recipecontent.pictures.url}} />
+      {% endif %}
+
+      <p></p>
+      <h2></h2>
+      <p class="description">
+        {{recipecontent.full_content}}
+      </p>
+
+    <hr>
+
+    <p>Author: {{recipecontent.publisher}}</p>
+    <p>Publish Time: {{recipecontent.pub_time}}</p>
+  </div>
+
+</div>
+
+
+{% endblock content %}
