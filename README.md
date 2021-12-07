@@ -20,7 +20,7 @@
 
 🎯 **Latest News First** - In the home page, recipes were ranked by publishing time so that you can read the latest one first.
 
-🎯 **Search Recipe** - You can Search interested recipe.
+🎯 **Search Recipe** - You can search interested recipe.
 
 🎯 **Personal Collections** - You can have your own collection page.
 
