@@ -7,7 +7,7 @@
 
 
 <p align="center">
-  <img src="./home.png" width=700 height=400 />
+  <img src="./home.png" width=700 height=300 />
 </p>
 
 ## ⚡ Features
