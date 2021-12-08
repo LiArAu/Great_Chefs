@@ -4,26 +4,23 @@
 
 {% block content %}
 
-    <div style="text-align: center">
-
-        <h3 class="">Welcome</h3>
-
-        <div class="row" style="margin-top: 2vh">
+    <div style="text-align: center" class="d-flex flex-wrap justify-content-center">
+        <div class="d-flex flex-wrap justify-content-center">
+          <h3 class="">Welcome</h3>
             <div class="col col-md-12">
                 <div class="container">
                     <div class="card">
                         <div class="card-body py-3 mb-4">
-                            <h5 class="card-title">Please create your own recipe collection.</h5>
+                            <h5 class="card-title">Please create your personal recipe collection.</h5>
                             <form method="POST" action="{% url 'view_zone' %}" class="col-12 col-lg-auto mb-3 mb-lg-0">
                                 {% csrf_token %}
                                 {{ create_form | crispy }}
-                                <input type="submit" class="btn btn-primary" value="Create Collection"/>
+                                <input type="submit" class="btn btn-primary mt-2" value="Create Collection"/>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
     </div>

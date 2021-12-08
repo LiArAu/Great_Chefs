@@ -3,8 +3,8 @@
     <h3>Latest Recipe</h3>
     {% for recipe in recipelist%}
 
-    <div class="container">
-        <div class="card">
+    <div class="container d-flex flex-wrap justify-content-center">
+        <div class="card" style="width: 550px;">
             <a href="{% url 'recipe_detail' recipe.id%}">
                 <div class="card-header">
                     <div class="row">
@@ -20,13 +20,6 @@
                     </div>
                 </div>
             </a>
-            <div class="card-body text-dark">
-                <p>
-                    Category: {%for cat in recipe.category.all %} <a href="{% url 'category_detail' cat.id%}"><b><i>{{cat}}
-                            </i></b> </a>{%endfor%}
-                </p>
-                <p>Date: {{ recipe.pub_time }}</p>
-            </div>
         </div>
     </div>
     <br /><br />
