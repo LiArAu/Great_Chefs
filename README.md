@@ -5,12 +5,10 @@
 ![PyPI - Status](https://img.shields.io/pypi/status/Django.svg)
 
 
-<!-- 
+
 <p align="center">
   <img src="./home.png" width=700 height=400 />
-  <br><br><br>
-  <img src="./detail.png" width=600 height=400 />
-</p> -->
+</p>
 
 ## ⚡ Features
 
